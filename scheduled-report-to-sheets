@@ -23,6 +23,9 @@ function runGokwikAbandonedToSheets() {
 
   const response = UrlFetchApp.fetch(urlMatch[1].replace(/&amp;/g, '&'));
   const csvData = Utilities.parseCsv(response.getContentText());
+
+  // You can create a function here to send the complete csv report to the google sheets separately.
+
   if (csvData.length <= 1) return; 
 
   const uniqueIds = new Set();
