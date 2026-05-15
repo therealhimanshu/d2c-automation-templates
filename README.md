@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # d2c-automation-templates
 
 A collection of automation scripts and templates for Direct-to-Consumer (D2C) businesses, primarily focused on Shopify integrations and data synchronization using Google Apps Script.
@@ -81,3 +82,4 @@ Feel free to submit issues and pull requests. For major changes, please open an 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+>>>>>>> 75f63a7a44d5264454c5c122495f5473677bb56b

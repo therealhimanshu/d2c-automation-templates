@@ -1,0 +1,58 @@
+
+const CONFIG2 = {
+  SHEET_NAME: 'GoKwik_Abandoned_Summary',
+  // Replace Sheet Name with the relevant sheet name according to your use case
+  QUERY: 'from:no-reply@gokwik.co subject:"Gokwik Abandoned Carts Report"',
+  // Replace Query Abandoned with the relevant scheduled mail template
+};
+
+function runGokwikAbandonedToSheets() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(CONFIG2.SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(CONFIG2.SHEET_NAME);
+    sheet.appendRow(['Date', 'Unique Abandoned Carts']); 
+  }
+
+  const threads = GmailApp.search(CONFIG2.QUERY, 0, 1);
+  if (threads.length === 0) return;
+
+  const message = threads[0].getMessages().pop();
+  const urlMatch = message.getBody().match(/href="([^"]*?\.csv[^"]*?)"/);
+  if (!urlMatch) return;
+
+  const response = UrlFetchApp.fetch(urlMatch[1].replace(/&amp;/g, '&'));
+  const csvData = Utilities.parseCsv(response.getContentText());
+
+  // You can create a function here to send the complete csv report to the google sheets separately.
+
+  if (csvData.length <= 1) return; 
+
+  const uniqueIds = new Set();
+  let reportDate = "";
+  for (let i = 1; i < csvData.length; i++) {
+    if (csvData[i][1]) uniqueIds.add(csvData[i][1]);
+    if (i === 1) reportDate = csvData[i][2].split(' ')[0]; 
+  }
+  const totalUnique = uniqueIds.size;
+
+  const startRow = getLastDataRowCustom(sheet, 1) + 1;
+  const rows = [[reportDate, totalUnique]];
+
+  sheet.getRange(startRow, 1, 1, 2).setValues(rows);
+  
+  Logger.log(`Inserted data at Row ${startRow} (Col A & B)`);
+  SpreadsheetApp.flush();
+}
+
+function getLastDataRowCustom(sheet, columnNumber) {
+  const lastRow = sheet.getMaxRows();
+  const values = sheet.getRange(1, columnNumber, lastRow).getValues();
+  
+  for (let i = values.length - 1; i >= 0; i--) {
+    if (values[i][0] !== "" && values[i][0] !== null) {
+      return i + 1;
+    }
+  }
+  return 0;
+}
