@@ -2,6 +2,34 @@
 
 A comprehensive collection of automation scripts and templates for Direct-to-Consumer (D2C) businesses. This repository provides ready-to-use solutions for Shopify integrations, Google Analytics 4 automation, email data synchronization, and webhook handling using Google Apps Script and JavaScript.
 
+---
+
+## 📑 Table of Contents
+
+1. [Overview](#-overview)
+2. [Project Structure](#️-project-structure)
+3. [Features](#-features)
+4. [Requirements](#-requirements)
+5. [Installation & Setup](#-installation--setup)
+6. [Usage Guide](#-usage-guide)
+   - [GA4 Automation](#ga4-automation)
+   - [Email to Sheets Automation](#email-to-sheets-automation)
+   - [Shopify Scripts](#shopify-scripts)
+   - [Webhook Handling](#webhook-handling)
+7. [Configuration](#️-configuration)
+8. [Scheduling](#-scheduling)
+9. [Common Use Cases](#-common-use-cases)
+10. [Troubleshooting](#️-troubleshooting)
+11. [Code Comments](#-code-comments)
+12. [Best Practices](#-best-practices)
+13. [Contributing](#-contributing)
+14. [License](#-license)
+15. [Support & Issues](#-support--issues)
+16. [Roadmap](#-roadmap)
+17. [Related Resources](#-related-resources)
+
+---
+
 ## 📋 Overview
 
 Designed for D2C businesses looking to automate their operations, this collection includes:
@@ -125,7 +153,7 @@ Each script has a `CONFIG` object at the top. Update these values:
 
 **File:** `ga4-automation/sessions-and-product-views.js`
 
-Prerequisites:
+**Prerequisites:**
 - Google Analytics Data API enabled
 - Service account created with access to GA4 property
 - Service account added as Admin to your GA4 property
@@ -335,32 +363,6 @@ Review comments within each script for implementation-specific details.
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! To contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/new-automation`)
-3. Make your changes with clear commit messages
-4. Test thoroughly with your configuration
-5. Submit a pull request with description
-
-### Areas for Contribution
-- New platform integrations
-- Enhanced error handling
-- Performance optimizations
-- Additional email templates
-- Webhook handler examples
-- Documentation improvements
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
-
----
-
 ## 💡 Best Practices
 
 ### Security
@@ -386,6 +388,32 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file
 - ✅ Use consistent date formats
 - ✅ Validate data before appending
 - ✅ Maintain data integrity checks
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/new-automation`)
+3. Make your changes with clear commit messages
+4. Test thoroughly with your configuration
+5. Submit a pull request with description
+
+### Areas for Contribution
+- New platform integrations
+- Enhanced error handling
+- Performance optimizations
+- Additional email templates
+- Webhook handler examples
+- Documentation improvements
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
 
 ---
 
