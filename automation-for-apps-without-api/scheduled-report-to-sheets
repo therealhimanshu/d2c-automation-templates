@@ -1,0 +1,65 @@
+const CONFIG = {
+  SHEET_NAME: 'GoKwik_Data',
+  GMAIL_SEARCH_QUERY: 'from:no-reply@gokwik.co subject:"Gokwik Checkout Analytics Funnel Report"',
+  SKIP_HEADER_ON_APPEND: true 
+};
+
+function runGokwikToSheets() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(CONFIG.SHEET_NAME) || ss.insertSheet(CONFIG.SHEET_NAME);
+
+  // 1. Find the email
+  const threads = GmailApp.search(CONFIG.GMAIL_SEARCH_QUERY, 0, 1);
+  if (threads.length === 0) {
+    console.log("No Funnel Report email found.");
+    return;
+  }
+
+  const message = threads[0].getMessages().pop();
+  const body = message.getBody();
+
+  // 2. Extract the URL
+  const urlMatch = body.match(/href="([^"]*?\.csv[^"]*?)"/);
+  if (!urlMatch || !urlMatch[1]) {
+    console.log("Could not find download link.");
+    return;
+  }
+
+  const downloadUrl = urlMatch[1].replace(/&amp;/g, '&');
+  const response = UrlFetchApp.fetch(downloadUrl);
+  const csvData = Utilities.parseCsv(response.getContentText());
+
+  // 3. Prepare Data
+  let dataToUpload = csvData;
+  
+  // Find the last row based ONLY on Column A
+  const startRow = getLastDataRowCustom(sheet, 1) + 1;
+
+  // If the sheet already has data, remove the header from the CSV
+  if (startRow > 1 && CONFIG.SKIP_HEADER_ON_APPEND) {
+    dataToUpload = csvData.slice(1); 
+  }
+
+  // 4. Append to Sheet (Targeting only the columns in the CSV)
+  if (dataToUpload.length > 0) {
+    sheet.getRange(startRow, 1, dataToUpload.length, dataToUpload[0].length)
+         .setValues(dataToUpload);
+    
+    Logger.log(`Success! Appended ${dataToUpload.length} funnel rows starting at Row ${startRow}`);
+  }
+  
+  SpreadsheetApp.flush();
+}
+
+function getLastDataRowCustom(sheet, columnNumber) {
+  const lastRow = sheet.getMaxRows();
+  const values = sheet.getRange(1, columnNumber, lastRow).getValues();
+  
+  for (let i = values.length - 1; i >= 0; i--) {
+    // Check if the cell has actual content (not just an empty string from a formula)
+    if (values[i][0] !== "" && values[i][0] !== null) {
+      return i + 1;
+    }
+  }
+  return 0;
+}
