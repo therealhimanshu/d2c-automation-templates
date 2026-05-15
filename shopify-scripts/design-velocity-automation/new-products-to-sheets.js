@@ -31,8 +31,8 @@ function updateShopifyProducts() {
   }
 
   // --- Shopify credentials ---
-  const shopName = "ikbpwk-eq"; 
-  const accessToken = "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"; 
+  const shopName = PropertiesService.getScriptProperties().getProperty('SHOP_NAME'); 
+  const accessToken = PropertiesService.getScriptProperties().getProperty('SHOPIFY_ACCESS_TOKEN'); 
   const apiVersion = "2025-01";
   let url = `https://${shopName}.myshopify.com/admin/api/${apiVersion}/products.json?published_status=published&limit=250`;
   
