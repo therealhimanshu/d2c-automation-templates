@@ -1,6 +1,6 @@
 # D2C Automation Templates
 
-A comprehensive collection of automation scripts and templates for Direct-to-Consumer (D2C) businesses. This repository provides ready-to-use solutions for Shopify integrations, Google Analytics 4 automation, email data synchronization, and webhook handling using Google Apps Script and JavaScript.
+A comprehensive collection of automation scripts and templates for Direct-to-Consumer (D2C) businesses. This repository provides ready-to-use solutions for Shopify integrations, Google Analytics 4 automation, email data synchronization, Instagram/Meta marketing automation, and webhook handling using Google Apps Script and JavaScript.
 
 ---
 
@@ -14,6 +14,8 @@ A comprehensive collection of automation scripts and templates for Direct-to-Con
 6. [Usage Guide](#-usage-guide)
    - [GA4 Automation](#ga4-automation)
    - [Email to Sheets Automation](#email-to-sheets-automation)
+   - [Instagram Posts & Stories Automation](#instagram-posts--stories-automation)
+   - [Meta (Facebook Ads) Automation](#meta-facebook-ads-automation)
    - [Shopify Scripts](#shopify-scripts)
    - [Webhook Handling](#webhook-handling)
 7. [Configuration](#️-configuration)
@@ -36,6 +38,7 @@ Designed for D2C businesses looking to automate their operations, this collectio
 - **Shopify Scripts** - E-commerce automation and data management
 - **GA4 Automation** - Google Analytics 4 reporting and data export
 - **Email to Sheets Automation** - Scheduled report data extraction
+- **Instagram & Meta Automation** - Social media analytics and posting automation
 - **Webhook Management** - Real-time event processing
 - **API-less Automation** - Solutions for platforms without direct API access
 
@@ -54,6 +57,14 @@ d2c-automation-templates/
 │       └── collection-create.js
 ├── ga4-automation/
 │   └── sessions-and-product-views.js
+├── instagram-posts-stories/
+│   ├── instagram-post-and-stories.js
+│   └── follower-track.js
+├── meta/
+│   ├── audience-insights.js
+│   ├── insights-ad-level.js
+│   ├── last-30-days-ads.js
+│   └── last-30-days-audience-data.js
 ├── automation-for-apps-without-api/
 │   ├── scheduled-report-to-sheets.js
 │   └── [Other email automation scripts]
@@ -84,6 +95,21 @@ d2c-automation-templates/
 - Store data in Google Sheets with automatic formatting
 - Support for multiple email templates
 
+### 📸 Instagram Analytics & Automation
+- Track Instagram post performance (likes, comments, reach, saves, shares)
+- Monitor follower growth and changes
+- Auto-refresh post metrics for recent posts (≤7 days old)
+- Automated daily sync to Google Sheets
+- Detect duplicate posts and prevent re-processing
+
+### 💰 Meta (Facebook Ads) Analytics
+- Extract Facebook ad campaign performance data
+- Track audience insights and segmentation (New, Engaged, Existing)
+- Ad-level performance metrics and ROI
+- 30-day ad campaign analysis
+- Audience demographic and engagement data
+- Spend, impressions, clicks, ROAS tracking
+
 ### 🔗 Webhook Handling
 - Process real-time webhooks from various platforms
 - Event validation and authentication
@@ -103,6 +129,8 @@ d2c-automation-templates/
 - **API Credentials** (where applicable):
   - Shopify API access for Shopify scripts
   - Google Analytics Service Account for GA4 automation
+  - Instagram Graph API credentials for Instagram automation
+  - Meta Business Account & Ad Account access for Meta Ads automation
   - Gmail API access (handled by Google Apps Script)
 
 ### Tech Stack
@@ -111,6 +139,8 @@ d2c-automation-templates/
 - **Google Sheets API** - Data storage and retrieval
 - **Gmail API** - Email parsing and processing
 - **Shopify API** - E-commerce operations
+- **Instagram Graph API** - Social media analytics
+- **Meta Marketing API** - Facebook Ads automation
 
 ---
 
@@ -158,11 +188,6 @@ Each script has a `CONFIG` object at the top. Update these values:
 - Service account created with access to GA4 property
 - Service account added as Admin to your GA4 property
 
-```javascript
-// Configure your GA4 property ID and date ranges
-// The script will automatically fetch and store session/product view data
-```
-
 **Features:**
 - Automated GA4 data extraction
 - Session and product view metrics
@@ -199,6 +224,183 @@ const CONFIG = {
 3. Update `CONFIG` with your email query and sheet name
 4. Set up time-based trigger for automatic runs
 5. Run `runGokwikToSheets()` function
+
+---
+
+### Instagram Posts & Stories Automation
+
+**Directory:** `instagram-posts-stories/`
+
+#### Instagram Post & Stories Metrics Tracker
+
+**File:** `instagram-post-and-stories.js`
+
+Automatically tracks Instagram post performance metrics daily.
+
+**Features:**
+- ✅ Daily post discovery from Instagram feed
+- ✅ Comprehensive metrics tracking:
+  - Likes, comments, reach, saves, shares
+  - Total interactions calculation
+  - Engagement rate analysis
+- ✅ Auto-refresh metrics for posts ≤7 days old
+- ✅ Duplicate prevention (avoids re-processing same posts)
+- ✅ Rate-limited API calls (200ms delay)
+- ✅ Automatic Google Sheets export
+
+**Configuration:**
+```javascript
+const CONFIG = {
+  ACCESS_TOKEN: PropertiesService.getScriptProperties().getProperty('IG_ACCESS_TOKEN'),
+  IG_USER_ID: PropertiesService.getScriptProperties().getProperty('IG_USER_ID'),
+  SHEET_NAME: 'IG_Post_Metrics',
+  METRICS_TO_REFRESH_DAYS: 7  // Refresh posts from last 7 days
+};
+```
+
+**Setup Steps:**
+1. Get Instagram Graph API access token from Meta Business Suite
+2. Find your Instagram User ID
+3. Store credentials in Google Apps Script Properties Service
+4. Create Google Sheet with headers
+5. Set up daily trigger for `runDailyInstagramSync()`
+
+**Data Collected:**
+- Post date, media ID, type (IMAGE/VIDEO/CAROUSEL)
+- Post caption and permalink
+- Engagement metrics (likes, comments, reach, saves, shares)
+- Last updated timestamp
+
+---
+
+#### Instagram Follower Tracking
+
+**File:** `follower-track.js`
+
+Tracks daily follower growth and changes.
+
+**Features:**
+- ✅ Daily follower count tracking
+- ✅ Follows vs unfollows metrics
+- ✅ Net follower change calculation
+- ✅ Prevents duplicate daily entries
+- ✅ Automatic sheet creation and management
+
+**Configuration:**
+```javascript
+const FOLLOWER_CONFIG = {
+  ACCESS_TOKEN: PropertiesService.getScriptProperties().getProperty('IG_ACCESS_TOKEN'),
+  IG_USER_ID: PropertiesService.getScriptProperties().getProperty('IG_USER_ID'),
+  SHEET_NAME: 'IG_Follower_Stats'
+};
+```
+
+**Setup Steps:**
+1. Use same Instagram credentials as post tracker
+2. Create separate Google Sheet for follower data
+3. Set up daily trigger for `runDailyFollowerSync()`
+4. Run debug function first: `debugFollowerInsights()`
+
+**Data Collected:**
+- Date and total follower count
+- Followers gained/lost per day
+- Net follower change
+- Last update timestamp
+
+---
+
+### Meta (Facebook Ads) Automation
+
+**Directory:** `meta/`
+
+Comprehensive Facebook Ads analytics and performance tracking.
+
+#### Audience Insights
+
+**File:** `audience-insights.js`
+
+Analyzes ad campaign performance by audience segment.
+
+**Features:**
+- ✅ Campaign performance by audience type (New/Engaged/Existing)
+- ✅ Demographic breakdown and targeting analysis
+- ✅ ROI calculation by audience segment
+- ✅ Custom audience segment mapping
+- ✅ Pagination support for large datasets
+
+**Configuration:**
+```javascript
+var ACCESS_TOKEN   = PropertiesService.getScriptProperties().getProperty('META_ACCESS_TOKEN');
+var AD_ACCOUNT_ID  = PropertiesService.getScriptProperties().getProperty('META_AD_ACCOUNT_ID');
+var SHEET_AUDIENCE = 'Audience';
+```
+
+**Metrics Tracked:**
+- Spend, impressions, clicks
+- CPC (Cost Per Click), CPM (Cost Per Mille), CTR (Click-Through Rate)
+- Purchase value and ROAS (Return on Ad Spend)
+- Audience segmentation
+
+---
+
+#### Ad-Level Performance Insights
+
+**File:** `insights-ad-level.js`
+
+Detailed performance metrics at individual ad level.
+
+**Features:**
+- ✅ Ad-level performance breakdown
+- ✅ Campaign and ad set association
+- ✅ Detailed action tracking
+- ✅ Cost metrics per action
+
+---
+
+#### Last 30 Days Ads Performance
+
+**File:** `last-30-days-ads.js`
+
+Rolling 30-day campaign analysis and performance summary.
+
+**Features:**
+- ✅ 30-day performance trends
+- ✅ Campaign performance comparison
+- ✅ Period-over-period analysis
+- ✅ Automated daily refresh
+
+---
+
+#### Last 30 Days Audience Data
+
+**File:** `last-30-days-audience-data.js`
+
+30-day audience engagement and growth tracking.
+
+**Features:**
+- ✅ Audience growth trends
+- ✅ Engagement by audience segment
+- ✅ Historical audience data
+- ✅ Automated data collection
+
+---
+
+#### Setup Instructions for Meta Scripts
+
+**Prerequisites:**
+1. Meta Business Account with admin access
+2. Facebook Ad Account linked to business
+3. Meta Marketing API access enabled
+4. Service Account with appropriate permissions
+
+**Steps:**
+1. Generate long-lived access token from Meta Business Suite
+2. Get your Ad Account ID (act_XXXXXXXXXX format)
+3. Store in Google Apps Script Properties:
+   - `META_ACCESS_TOKEN`
+   - `META_AD_ACCOUNT_ID`
+4. Create Google Sheets for each data type
+5. Set up daily triggers for automatic data collection
 
 ---
 
@@ -259,15 +461,28 @@ const CONFIG = {
 };
 ```
 
+### Storing Sensitive Data Securely
+
+**Using Google Apps Script Properties Service:**
+```javascript
+// Set credentials (run once):
+PropertiesService.getScriptProperties().setProperty('IG_ACCESS_TOKEN', 'your-token');
+PropertiesService.getScriptProperties().setProperty('META_ACCESS_TOKEN', 'your-token');
+
+// Retrieve in scripts:
+const token = PropertiesService.getScriptProperties().getProperty('IG_ACCESS_TOKEN');
+```
+
 ### Common Configuration Parameters
 
 | Parameter | Purpose | Example |
 |-----------|---------|---------|
-| `SHEET_NAME` | Google Sheet name | `'GoKwik_Data'` |
-| `GMAIL_SEARCH_QUERY` | Gmail search filter | `'from:no-reply@gokwik.co'` |
-| `SKIP_HEADER_ON_APPEND` | Skip CSV header on data append | `true` |
-| `API_KEY` | Authentication credential | `'abc123xyz'` |
-| `SHOPIFY_STORE` | Shopify store URL | `'mystore.myshopify.com'` |
+| `SHEET_NAME` | Google Sheet name | `'IG_Post_Metrics'` |
+| `ACCESS_TOKEN` | API authentication token | `'IGQVJf...'` |
+| `IG_USER_ID` | Instagram User ID | `'17841401240122082'` |
+| `AD_ACCOUNT_ID` | Meta Ad Account ID | `'act_1234567890'` |
+| `METRICS_TO_REFRESH_DAYS` | Days to keep refreshing | `7` |
+| `GMAIL_SEARCH_QUERY` | Gmail search filter | `'from:no-reply@...'` |
 
 ---
 
@@ -286,45 +501,81 @@ const CONFIG = {
 
 ### Example Trigger Setup
 
-- **Email to Sheets**: Daily at 8:00 AM
-- **GA4 Export**: Every 6 hours
-- **Shopify Sync**: Every hour
-- **Webhook Handler**: On-demand or continuous
+| Automation | Recommended Frequency | Best Time |
+|------------|----------------------|-----------|
+| Instagram Post Metrics | Daily | 8:00 AM (UTC+0) |
+| Instagram Follower Tracking | Daily | 8:30 AM |
+| Meta Ads (30-day) | Daily | 9:00 AM |
+| Meta Audience Insights | Daily | 9:30 AM |
+| GA4 Export | Every 6 hours | Every 6 hours |
+| Email to Sheets | Daily | 8:00 AM |
+| Shopify Sync | Every 1 hour | - |
 
 ---
 
 ## 📊 Common Use Cases
 
-### 1. Abandoned Cart Email Reports to Sheets
+### 1. Social Media Performance Dashboard
 ```javascript
-// Extract GoKwik abandoned cart reports
+// Combine Instagram post metrics + follower growth
+// Track ROAS by audience segment (Meta Ads)
+// Monitor Instagram reach vs. cost per reach
+```
+
+### 2. Abandoned Cart Email Reports to Sheets
+```javascript
 const CONFIG = {
   SHEET_NAME: 'GoKwik_Abandoned_Summary',
   QUERY: 'from:no-reply@gokwik.co subject:"Gokwik Abandoned Carts Report"'
 };
 ```
 
-### 2. Daily GA4 Analytics Export
+### 3. Unified D2C Analytics Dashboard
 ```javascript
-// Automatically export GA4 metrics daily
-// Tracks sessions, product views, and user engagement
+// GA4 metrics (traffic, conversions)
+// Shopify orders and revenue
+// Instagram follower growth
+// Meta Ads ROAS and spend
+// Email marketing metrics
 ```
 
-### 3. Shopify New Product Sync
+### 4. Instagram Performance Analysis
 ```javascript
-// Push newly added products to Google Sheets
-// Update inventory and product information
+// Top performing posts by engagement
+// Follower growth trends
+// Best posting times and content types
+// Reach vs. engagement correlation
 ```
 
-### 4. Scheduled Report Aggregation
+### 5. Meta Ads Optimization
 ```javascript
-// Combine multiple scheduled reports
-// Create unified analytics dashboard
+// ROI by audience segment
+// Campaign performance comparison
+// Cost per action optimization
+// Budget allocation by segment
 ```
 
 ---
 
 ## 🛠️ Troubleshooting
+
+### Instagram & Meta API Issues
+
+| Problem | Solution |
+|---------|----------|
+| "Invalid Access Token" | Verify token in Properties Service, refresh from Meta Business Suite |
+| "User not authorized" | Check Instagram Graph API permissions in Meta App |
+| "No posts found" | Verify IG_USER_ID is correct business account ID |
+| "Follower metrics empty" | Ensure `follows_and_unfollows` permission is enabled |
+| "API rate limited" | Check timeout delays (200ms minimum recommended) |
+
+### Meta Ads Issues
+
+| Problem | Solution |
+|---------|----------|
+| "Ad Account not found" | Verify AD_ACCOUNT_ID format (act_XXXXXXXXX) |
+| "Insufficient permissions" | Grant Marketing API access in Meta Business Settings |
+| "No campaign data" | Confirm campaigns exist and are within selected date range |
 
 ### Script Execution Issues
 
@@ -333,20 +584,14 @@ const CONFIG = {
 | "Gmail API error" | Enable Gmail API in Google Cloud Console |
 | "Sheets not found" | Verify sheet name in CONFIG matches exactly |
 | "Authorization error" | Re-run script to grant permissions |
-| "No data appended" | Check email search query returns results |
+| "No data appended" | Check API query returns results |
 | "Timeout error" | Break large operations into smaller chunks |
 
-### Email Parsing Issues
+### Sheet Data Issues
 
-- **Email not found**: Verify Gmail search query is correct
-- **CSV link not extracted**: Check email format matches expected pattern
-- **Data not appending**: Ensure sheet has correct headers and formatting
-
-### Shopify Integration Issues
-
-- **API errors**: Verify API credentials and scopes
-- **Product not synced**: Check Shopify API permissions
-- **Collection not created**: Validate SKU data in source sheet
+- **Duplicate data**: Check if post IDs or media IDs already exist
+- **Missing metrics**: Verify API fields are accessible for your account type
+- **Wrong audience types**: Validate `mapUserSegmentKeyToType_()` function for your Meta keys
 
 ---
 
@@ -358,6 +603,8 @@ Each script file includes detailed comments explaining:
 - Data transformation logic
 - Error handling
 - Setup instructions
+- API pagination handling
+- Rate limiting
 
 Review comments within each script for implementation-specific details.
 
@@ -367,27 +614,35 @@ Review comments within each script for implementation-specific details.
 
 ### Security
 - ✅ Never hardcode sensitive credentials in scripts
-- ✅ Use Google Apps Script Properties Service for sensitive data
+- ✅ Use Google Apps Script Properties Service for secrets
 - ✅ Review API permissions before granting access
 - ✅ Regularly audit webhook access logs
+- ✅ Rotate long-lived tokens periodically
+- ✅ Use least-privilege access for service accounts
 
 ### Performance
+- ✅ Use appropriate API rate limits and delays (200ms minimum)
 - ✅ Batch operations when possible
 - ✅ Use appropriate trigger intervals
-- ✅ Monitor script execution time
-- ✅ Optimize regex patterns for large datasets
+- ✅ Monitor script execution time (6-minute limit)
+- ✅ Paginate large API responses
+- ✅ Implement deduplication checks
 
 ### Maintenance
 - ✅ Keep scripts organized and commented
 - ✅ Update CONFIG objects for easy management
-- ✅ Test scripts after Gmail/API changes
+- ✅ Test scripts after API changes
 - ✅ Version control all modifications
+- ✅ Document custom functions
+- ✅ Monitor error logs regularly
 
 ### Data Management
 - ✅ Archive old data periodically
-- ✅ Use consistent date formats
+- ✅ Use consistent date formats (UTC recommended)
 - ✅ Validate data before appending
 - ✅ Maintain data integrity checks
+- ✅ Deduplicate before insertion
+- ✅ Track last update timestamps
 
 ---
 
@@ -402,12 +657,13 @@ Contributions are welcome! To contribute:
 5. Submit a pull request with description
 
 ### Areas for Contribution
-- New platform integrations
-- Enhanced error handling
+- New platform integrations (TikTok, Pinterest, LinkedIn)
+- Enhanced error handling and logging
 - Performance optimizations
 - Additional email templates
 - Webhook handler examples
 - Documentation improvements
+- Advanced analytics features
 
 ---
 
@@ -423,32 +679,50 @@ For questions, bugs, or feature requests:
 - Open a [GitHub Issue](https://github.com/therealhimanshu/d2c-automation-templates/issues)
 - Check existing issues for solutions
 - Include script name and error messages in reports
+- Provide API response details when applicable
 
 ---
 
 ## 🎯 Roadmap
 
+- [ ] TikTok Ads analytics integration
+- [ ] Pinterest analytics automation
+- [ ] LinkedIn Campaign tracking
 - [ ] TypeScript support for better type checking
-- [ ] Enhanced error logging and monitoring
+- [ ] Enhanced error logging and monitoring dashboard
 - [ ] Pre-built webhook handlers for popular platforms
 - [ ] CLI tool for script management
-- [ ] Webhook testing dashboard
+- [ ] Webhook testing and validation tool
 - [ ] Integration with more D2C platforms (WooCommerce, BigCommerce)
 - [ ] Advanced data transformation templates
-- [ ] Cost estimation and optimization tools
+- [ ] Cost estimation and ROI optimization tools
+- [ ] Multi-account management support
+- [ ] Advanced segmentation and cohort analysis
 
 ---
 
 ## 📚 Related Resources
 
+### Google APIs
 - [Google Apps Script Documentation](https://developers.google.com/apps-script)
 - [Google Sheets API](https://developers.google.com/sheets/api)
 - [Gmail API Guide](https://developers.google.com/gmail/api)
-- [Shopify API Documentation](https://shopify.dev/api)
 - [Google Analytics Data API](https://developers.google.com/analytics/devguides/reporting/data/v1)
+
+### E-commerce & Marketing APIs
+- [Shopify API Documentation](https://shopify.dev/api)
+- [Instagram Graph API](https://developers.facebook.com/docs/instagram-api)
+- [Meta Marketing API](https://developers.facebook.com/docs/marketing-apis)
+- [Meta Business SDK](https://developers.facebook.com/docs/business-sdk)
+
+### Tools & Utilities
+- [Meta Business Suite](https://business.facebook.com)
+- [Google Cloud Console](https://console.cloud.google.com)
+- [Apps Script Debugger](https://developers.google.com/apps-script/guides/support/troubleshooting)
 
 ---
 
 **Last Updated:** May 15, 2026  
 **Repository:** [therealhimanshu/d2c-automation-templates](https://github.com/therealhimanshu/d2c-automation-templates)  
-**Language:** JavaScript (100%)
+**Language:** JavaScript (100%)  
+**Maintained by:** @therealhimanshu
