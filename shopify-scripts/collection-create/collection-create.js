@@ -1,5 +1,5 @@
 
-const SHOP_DOMAIN = PropertiesService.getScriptProperties().getProperty('SHOP_NAME');
+const SHOP_DOMAIN = PropertiesService.getScriptProperties().getProperty('SHOPIFY_SHOP_DOMAIN');
 const ACCESS_TOKEN = PropertiesService.getScriptProperties().getProperty('SHOPIFY_ACCESS_TOKEN');
 const API_VERSION = "2025-10"; // Shopify API version
 const url = `https://${SHOP_DOMAIN}/admin/api/${API_VERSION}/graphql.json`;

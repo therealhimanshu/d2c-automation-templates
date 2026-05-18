@@ -1,5 +1,5 @@
 /***** CONFIG *****/
-const SHOP = PropertiesService.getScriptProperties().getProperty('SHOP_NAME'); // your actual shop subdomain
+const SHOP = PropertiesService.getScriptProperties().getProperty('SHOPIFY_SHOP_DOMAIN'); // your actual shop subdomain
 const API_VERSION = '2025-07';
 const TOKEN = PropertiesService.getScriptProperties().getProperty('SHOPIFY_ACCESS_TOKEN');
 
