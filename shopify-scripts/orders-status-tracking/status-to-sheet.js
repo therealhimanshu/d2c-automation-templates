@@ -1,5 +1,5 @@
 //The awb-to-sheet.js script should be run first to populate the AWB numbers in column B, which this script will then read to fetch the current status, ETD, and track URL from Shiprocket and populate columns C, D, and E respectively.
-
+// This script should run on open sheet basis or you can set a time-driven trigger to run it daily/weekly as needed. It reads AWB numbers from column B, calls the Shiprocket API to get the current status, ETD, and track URL, and then writes those back to columns C, D, and E in the same row. Make sure to set your Shiprocket credentials in the Script Properties for security.
 function fetchShiprocketCurrentStatus() {
   const SHEET_NAME = 'Orders';
   const ss = SpreadsheetApp.getActiveSpreadsheet();

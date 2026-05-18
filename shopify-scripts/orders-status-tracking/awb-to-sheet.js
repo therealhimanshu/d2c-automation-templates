@@ -1,3 +1,5 @@
+// This script should be run on edit trigger basis
+
 function fetchShopifyAWB_GraphQL() {
   const SHOPIFY_STORE = PropertiesService.getScriptProperties().getProperty('SHOPIFY_STORE'); // 🔹 Your Shopify store
   const ACCESS_TOKEN = PropertiesService.getScriptProperties().getProperty('ACCESS_TOKEN'); // 🔹 Your Admin API token
